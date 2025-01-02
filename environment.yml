@@ -1,4 +1,4 @@
-name: verifix
+name: sap
 channels:
   - defaults
 dependencies:

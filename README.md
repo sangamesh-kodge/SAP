@@ -1,7 +1,14 @@
-# [Verifix] - Post-Training Correction to Improve Label Robustness with Verified Samples
+# SAP
 
-This repository implements the code for our paper [Verifix](https://arxiv.org/abs/2403.08618). 
+Official Code Repository for "SAP: : Corrective Machine Unlearning with Scaled Activation Projection for Label Noise Robustness", Proceedings of the AAAI Conference on Artificial Intelligence, 2025
 
+[[ArXiv Paper](https://arxiv.org/abs/2403.08618)]
+[[AAAI  Proceedings]()]
+
+## Abstract 
+Label corruption, where training samples are mislabeled due to non-expert annotation or adversarial attacks, significantly degrades model performance. Acquiring large, perfectly labeled datasets is costly, and retraining models from scratch is computationally expensive. To address this, we introduce Scaled Activation Projection (SAP), a novel SVD (Singular Value Decomposition)-based corrective machine unlearning algorithm. SAP mitigates label noise by identifying a small subset of trusted samples using cross-entropy loss and projecting model weights onto a clean activation space estimated using SVD on these trusted samples. This process suppresses the noise introduced in activations due to the mislabeled samples. In our experiments, we demonstrate SAP’s effectiveness on synthetic noise with different settings and real-world label noise. SAP applied to the CIFAR dataset with 25% synthetic corruption show upto 6% generalization improvements. Additionally, SAP can improve the generalization over noise robust training approaches on CIFAR dataset by ∼ 3.2% on average. Further, we observe generalization improvements of 2.31% for a Vision Transformer model trained on naturally corrupted Clothing1M
+## Authors 
+Sangamesh Kodge, Deepak Ravikumar, Gobinda Saha, Kaushik Roy 
 
 ## Dependency Installation
 To set up the environment and install dependencies, follow these steps:
@@ -15,8 +22,8 @@ Install the packages either manually or use the environment.yml file with conda.
 - Manual Installation with conda environment 
     ```bash    
     ### Create Envirornment (Optional, but recommended)
-        conda create --name verifix python=3.11.4
-        conda activate verifix
+        conda create --name sap python=3.11.4
+        conda activate sap
 
         ### Install Packages
         pip install wandb 
@@ -82,58 +89,58 @@ python demo_spiral.py
 Check the examples scripts in ```./example_scripts``` to get the results below. We use seeds - 12484, 32087 and 35416.
 ## Synthetic Noise in standard dataset
 Test accuracy for CIFAR10 and CIFAR100 dataset averaged over 3 randomly chosen seeds. 
-We show the Baseline Accuracy and Accuracy when Verifix is applied to the baseline model.
+We show the Baseline Accuracy and Accuracy when sap is applied to the baseline model.
 
-### CIFAR10 Dataset on VGG11_BN with 25% label noise (trained from Scratch)
-| Method        | Baseline          | Verifix  (Val Set)        | Improvements  |
-|---------------|:-------:          |:------------------------: |:----------:   | 
-| Vanilla SGD   |$72.19 \pm 0.33$   |$83.38 \pm 0.47$           |$11.19$         |
-| SAM           |$87.05 \pm 0.28$   |$87.17 \pm 0.38$           |$0.12$         |
+###  Corrective Unlearning on CIFAR Dataset.
 
-
-### CIFAR10 Dataset on ResNet18 with 25% label noise (trained from Scratch)
-| Method        | Baseline          | Verifix  (Val Set)        | Improvements  |
-|---------------|:-------:          |:------------------------: |:----------:   | 
-| Vanilla SGD   |$78.37 \pm 0.18$   |$86.96 \pm 0.14$           |$8.59$         |
-| SAM           |$83.76 \pm 0.11$   |$87.74 \pm 0.38$           |$3.98$         |
-
-
-### CIFAR100 Dataset on VGG11_BN with 25% label noise (trained from Scratch)
-| Method        | Baseline          | Verifix  (Val Set)        | Improvements  |
-|---------------|:-------:          |:------------------------: |:----------:   | 
-| Vanilla SGD   |$49.03 \pm 0.69$   |$56.81 \pm 0.37$           |$7.78$         |
-| SAM           |$54.31 \pm 0.21$   |$58.33 \pm 0.11$           |$4.02$         |
+|                     | Method   | Retain samples | Forget samples | VGG11_BN η=0.1 | VGG11_BN η=0.25 | ResNet18 η=0.1 | ResNet18 η=0.25 | ResNet18 η=0.1 | ResNet18 η=0.25 | ResNet18 η=0.1 | ResNet18 η=0.25 | Average |
+|---------------------|----------|----------------|----------------|-----------------|------------------|-----------------|------------------|-----------------|------------------|-----------------|------------------|---------|
+|         | Retrain  | -              | -              | 90.18±0.14      | 89.48±0.04       | 93.21±0.22      | 92.45±0.06       | 93.38±0.07      | 92.75±0.23       | 93.47±0.21      | 93.14±0.23       | 92.26   |
+|                     | Vanilla  | 0              | 0              | 86.04±0.17      | 76.68±0.48       | 88.55±0.16      | 79.47±0.46       | 88.53±0.34      | 79.79±1.53       | 91.42±0.33      | 86.42±0.38       | 84.61   |
+|                     | Finetune | 5000           | 0              | 85.47±0.13      | 80.94±0.76       | 88.28±0.30      | 85.16±0.12       | 87.31±0.81      | 82.82±0.98       | 91.42±0.33      | **88.23±0.73**   | 86.20   |
+|  **CIFAR100**          | SSD      | 5000           | 1000           | 86.00±0.21      | 76.77±0.58       | 88.54±0.17      | 79.48±0.50       | 88.52±0.35      | 80.36±1.45       | 91.42±0.33      | 86.39±0.42       | 84.68   |
+|                     | SCRUB    | 1000           | 200            | 85.88±0.35      | 78.90±0.25       | 89.50±0.17      | 83.77±0.44       | 89.50±0.22      | 83.60±0.14       | 91.65±0.12      | 88.00±0.58       | 86.35   |
+|                     | SAP      | 0 | 0              | **87.25±0.16**  | **82.27±0.15**   | **90.12±0.11**  | **85.49±0.39**   | **90.03±0.25**  | **86.32±0.66**   | **91.87±0.22**  | 87.92±0.69       | **87.66**|
+|                     |          |   |                |   |    |   |    |   |    |   |        | |
+|   | Retrain  | -              | -              | 65.76±0.23      | 63.66±0.47       | 72.43±0.42      | 71±0.15         | 73.76±0.46      | 71.62±0.47       | 72.73±0.19      | 71.16±0.39       | 70.26   |
+|                     | Vanilla  | 0              | 0              | 60.41±0.14      | 50.64±0.60       | 65.84±0.33      | 54.75±0.45       | 72.98±0.13      | 61.86±0.60       | 67.45±0.12      | 57.82±0.21       | 61.47   |
+|                     | Finetune | 5000           | 0              | 60.26±0.11      | 52.50±0.31       | 65.97±0.35      | 57.33±0.40       | 72.98±0.13      | 61.29±1.13       | 67.55±0.15      | 59.98±1.11       | 62.23   |
+|   **CIFAR100**      | SSD      | 5000           | 1000           | 60.38±0.16      | 50.62±0.60       | 65.84±0.33      | 54.77±0.42       | 72.99±0.11      | 61.67±0.55       | 67.43±0.21      | 57.83±0.21       | 61.44   |
+|                     | SCRUB    | 1000           | 200            | 60.93±0.09      | 52.11±0.63       | **67.02±0.29**  | 57.36±0.40       | **73.12±0.18**  | 63.37±0.69       | 68.20±0.13      | 60.24±0.33       | 62.79   |
+|                     | SAP      | 0 | 0              | **61.10±0.23**  | **53.31±0.78**   | 66.82±0.17      | **58.74±0.61**   | 72.92±0.30      | **63.57±0.49**   | **68.24±0.17**  | **60.76±0.50**   | **63.18**|
 
 
-### CIFAR100 Dataset on ResNet18 with 25% label noise (trained from Scratch)
-| Method        | Baseline          | Verifix  (Val Set)        | Improvements  |
-|---------------|:-------:          |:------------------------: |:----------:   | 
-| Vanilla SGD   |$57.60 \pm 0.17$   |$61.42 \pm 0.46$           |$3.82$         |
-| SAM           |$58.82 \pm 0.76$   |$62.19 \pm 0.66$           |$3.37$         |
 
 
+### Noise Robust Algorithm.
+|                     | Method      | Baseline      | SAP           | Improvements |
+|---------------------|-------------|---------------|---------------|-------------|
+|                     | Vanilla     | 79.47±0.46    | 85.46±0.41    | **5.99**    |
+|                     | Logit Clip  | 82.91±0.32    | 85.99±0.67    | **3.08**    |
+|**CIFAR10**          | MixUp       | 83.12±0.44    | 86.45±0.52    | **3.33**    |
+|                     | SAM         | 83.29±0.28    | 87.29±0.08    | **4.0**     |
+|                     | MentorMix   | 89.64±0.32    | 90.51±0.17    | **0.87**    |
+|                     | **Average** | 83.69         | 87.14         | **3.45**    |
+|                     |             |               |               |             |
+|                     | Vanilla     | 54.75±0.45    | 58.69±0.68    | **3.94**    |
+|                     | Logit Clip  | 56.41±0.43    | 59.90±0.84    | **3.49**    |
+|  **CIFAR100**       | SAM         | 56.49±0.93    | 59.34±0.76    | **2.85**    |
+|                     | MixUp       | 58.25±0.65    | 62.32±0.91    | **4.07**    |
+|                     | MentorMix   | 68.53±0.35    | 68.98±0.45    | **0.45**    |
+|                     | **Average** | 58.89         | 61.85         | **2.98**    |
+|                     |             |               |               |             |
 
 
 ## Real-world noisy dataset
-Test/Val accuracy for Mini-WebVision dataset averaged over 3 randomly chosen seeds. We show the Baseline Accuracy and Accuracy when Verifix is applied to the baseline model. 
+Test/Val accuracy for Mini-WebVision dataset and Clothing1M dataset averaged over 3 randomly chosen seeds. We show the Baseline Accuracy and Accuracy when SAP is applied to the baseline model. 
 
-### Mini-WebVision Dataset on InceptionResNetv2 (trained from Scratch)
-| Method        | Baseline          | Verifix  (Val Set)        | Improvements  |
-|---------------|:-------:          |:------------------------: |:----------:   |   
-| Vanilla SGD   |$63.81 \pm 0.38$   |$64.96 \pm 0.53$           |$1.15$         |
-| MixUp         |$65.01 \pm 0.40$   |$66.21 \pm 0.58$           |$1.20$         |
-| MentorMix     |$65.35 \pm 0.65$   |$65.76 \pm 0.88$           |$0.41$         |
-| SAM           |$65.68 \pm 0.57$   |$66.10 \pm 0.46$           |$0.43$         |
-### WebVision1.0 Dataset on InceptionResNetv2 (trained from Scratch)
-| Method        | Baseline      | Verifix (Val Set) | Improvements |
-|---------------|:-------:      |:-------:          |:-------:|
-| Vanilla SGD   |$64.86\pm0.53$ |$65.8 \pm 0.49$  |$0.40$    |
+| Dataset        | Architecture | Vanilla       | SAP           | Improvement   |
+|----------------|--------------|---------------|---------------|---------------|
+| Mini-WebVision | IRV2         | 63.81±0.38    | 64.73±0.53    | **0.92**      |
+| Clothing1M     | ResNet50     | 67.48±0.64    | 69.64±0.57    | **2.16**      |
+| Clothing1M     | ViT_B_16     | 69.12±0.45    | 71.43±0.60    | **2.31**      |
+| **Average**    |              | 66.80         | 68.60         | **1.80**      |
 
-### Clothing1M Dataset on ResNet50 ( finetuned from PyTorch model pretrained on ImageNet1K)
-| Method        | Baseline          | Verifix (Test Set)| Improvements  |
-|---------------|:-------:          |:-------:          |:-------:      |
-| Vanilla SGD   |$67.48 \pm 0.64$   |$70.11 \pm 0.76$   |$2.63$         |
-| MixUp         |$67.89 \pm 0.63$   |$69.84 \pm 1.16$   |$1.94$         |
 
 ## License
 
@@ -147,13 +154,13 @@ Kindly cite the [paper](https://arxiv.org/abs/2403.08618) if you use the code. T
 
 ### APA
 ```
-Kodge, S., Ravikumar, D., Saha, G., & Roy, K. (2024). Verifix: Post-Training Correction to Improve Label Noise Robustness with Verified Samples. https://arxiv.org/abs/2403.08618
+Kodge, S., Ravikumar, D., Saha, G., & Roy, K. (2025). SAP: Corrective Machine Unlearning with Scaled Activation Projection for Label Noise Robustness 	. https://arxiv.org/abs/2403.08618
 ```
 or 
 ### Bibtex
 ```
-@misc{kodge2024verifix,
-      title={Verifix: Post-Training Correction to Improve Label Noise Robustness with Verified Samples}, 
+@misc{kodge2025sap,
+      title={SAP: Corrective Machine Unlearning with Scaled Activation Projection for Label Noise Robustness }, 
       author={Sangamesh Kodge and Deepak Ravikumar and Gobinda Saha and Kaushik Roy},
       year={2024},
       eprint={2403.08618},

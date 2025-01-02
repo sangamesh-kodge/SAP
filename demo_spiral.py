@@ -340,12 +340,12 @@ def main():
            
 
     print("-"*40)
-    print("Verifix Search for best alpha_f and alpha_r on Train Set.")
+    print("SAP Search for best alpha_f and alpha_r on Train Set.")
     print("-"*40)
     val_loss, val_acc = test(corrupt_model, val_loader, device)
     base_metric = val_acc
     clean_data_index = np.array([int(val) for val  in np.arange( len(data1[0]) ) if val not in corrupt_data_index] )
-    verifix_start_time = time.time()  
+    sap_start_time = time.time()  
     retain_data = data1[0][clean_data_index]
     corrupt_model.eval()
     retain_act = corrupt_model.get_activations(retain_data.to(device))
@@ -381,7 +381,7 @@ def main():
     for alpha_r in [0.3, 1, 3, 10, 30, 100, 300, 1000, 3000, 10000, 30000, 100000, 300000, 1000000, 3000000]:
         for alpha_f in [0.3, 1, 3, 10, 30, 100, 300, 1000, 3000, 10000, 30000, 100000, 300000, 1000000, 3000000]: 
             grid_search.append((alpha_r, alpha_f))    
-    pbar = tqdm(grid_search, desc='Verifix Mislabeled')
+    pbar = tqdm(grid_search, desc='SAP Mislabeled')
     for alpha_r, alpha_f in pbar:
         for loc in retain_act.keys():
             for key in retain_act[loc].keys():
@@ -407,7 +407,7 @@ def main():
             best_alpha_r = alpha_r
             best_alpha_f = alpha_f
             pbar.set_description(f"Best - Val acc {metric:.2f} alpha_r {best_alpha_r} alpha_f {best_alpha_f} ")
-    verifix_end_time = time.time()  
+    sap_end_time = time.time()  
     # Plot decision boundary for best model
     for loc in retain_act.keys():
         for key in retain_act[loc].keys():
@@ -424,12 +424,12 @@ def main():
                 proj_mat_dict[loc][key]= I - Mf + torch.mm(Mf, Mr)
             else:
                 proj_mat_dict[loc][key]= I 
-    verifix_model = deepcopy(corrupt_model)
-    verifix_model.project_weights(proj_mat_dict)
-    verifix_test_loss, verifix_test_acc = test(verifix_model, test_loader, device)
-    verifix_test_metric = verifix_test_acc
-    print(f"Verifix- test acc {verifix_test_acc:.2f} verifix time {verifix_end_time-verifix_start_time}")
-    plot_decision_boundary(verifix_model, data1, device, save_dir = f"./images/{save_name_extension}{train_samples_per_class}_linh{hdim}l{layers}_corrupt{args.fraction_corrupt}_seed{args.seed}", title = f"Verifix: Test acc-{verifix_test_acc:.2f}", corrupt_targets=corrupt_targets )
+    sap_model = deepcopy(corrupt_model)
+    sap_model.project_weights(proj_mat_dict)
+    sap_test_loss, sap_test_acc = test(sap_model, test_loader, device)
+    sap_test_metric = sap_test_acc
+    print(f"SAP- test acc {sap_test_acc:.2f} SAP time {sap_end_time-sap_start_time}")
+    plot_decision_boundary(sap_model, data1, device, save_dir = f"./images/{save_name_extension}{train_samples_per_class}_linh{hdim}l{layers}_corrupt{args.fraction_corrupt}_seed{args.seed}", title = f"SAP: Test acc-{sap_test_acc:.2f}", corrupt_targets=corrupt_targets )
 
     retrain_model =  Linear(in_feature=2, hidden_features=hdim, num_classes=2, layers=layers).to(device)
     if os.path.exists(f"./pretrained_models/2DSpiral/{save_name_extension}{train_samples_per_class}_linh{hdim}l{layers}_retrained{args.fraction_corrupt}_seed{args.seed}.pt"):

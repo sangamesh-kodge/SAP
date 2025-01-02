@@ -148,7 +148,7 @@ def main():
     np.random.seed(args.seed)
     args.val_set_mode = args.use_valset 
     args.project_classifier = not args.do_not_project_classifier
-    # Process the arguments for Verifix. 
+    # Process the arguments for SAP. 
     if "," in args.scale_coff:
         args.scale_coff=[float(val) for val in args.scale_coff.split(",")]        
     else:
@@ -369,7 +369,7 @@ def main():
 
     run = wandb.init(
                     # Set the project where this run will be logged
-                    project=f"Verifix-{args.dataset}-{args.project_name}",
+                    project=f"SAP-{args.dataset}-{args.project_name}",
                     group= f"report-{args.projection_location[-1]}layer-{args.group_name}",
                     name=f"{args.run_name}_final_test_acc",
                     entity=args.entity_name,
@@ -380,19 +380,19 @@ def main():
     test_our_acc, test_loss = test(unlearnt_model, device, test_loader, class_label_names=args.class_label_names, num_classes = args.num_classes, set_name="Test Set", verbose=False)
     test_acc, test_loss = test(model, device, test_loader, class_label_names=args.class_label_names, num_classes = args.num_classes, set_name="Test Set", verbose=False)
     wandb.log({"Final/Baseline-acc":test_acc,
-               "Final/Verifix-acc":test_our_acc,
+               "Final/SAP-acc":test_our_acc,
                })
     wandb.finish()   
     try:
         if args.save_loc is not None:
-            torch.save(unlearnt_model.module.state_dict(),  os.path.join(args.save_loc,f"{args.model_name}_verifix.pt") )
+            torch.save(unlearnt_model.module.state_dict(),  os.path.join(args.save_loc,f"{args.model_name}_SAP.pt") )
         elif not args.do_not_save:
-            torch.save(unlearnt_model.module.state_dict(),  os.path.join(args.load_loc,f"{args.model_name}_verifix.pt") )
+            torch.save(unlearnt_model.module.state_dict(),  os.path.join(args.load_loc,f"{args.model_name}_SAP.pt") )
     except:
         if args.save_loc is not None:
-            torch.save(unlearnt_model.state_dict(),  os.path.join(args.save_loc,f"{args.model_name}_verifix.pt") )
+            torch.save(unlearnt_model.state_dict(),  os.path.join(args.save_loc,f"{args.model_name}_SAP.pt") )
         elif not args.do_not_save:
-            torch.save(unlearnt_model.state_dict(),  os.path.join(args.load_loc,f"{args.model_name}_verifix.pt") )
+            torch.save(unlearnt_model.state_dict(),  os.path.join(args.load_loc,f"{args.model_name}_SAP.pt") )
 
 
 if __name__ == '__main__':

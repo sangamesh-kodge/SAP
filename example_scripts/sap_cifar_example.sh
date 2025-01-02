@@ -1,5 +1,5 @@
-# DEVICE=0 DATASET=CIFAR10 EPOCH=350 ARCH=ResNet18 BATCH_SIZE=64 sh ./scripts/verifix_cifar_example.sh
-# DEVICE=0 DATASET=CIFAR100 EPOCH=350 ARCH=ResNet18 BATCH_SIZE=64 sh ./scripts/verifix_cifar_example.sh
+# DEVICE=0 DATASET=CIFAR10 EPOCH=350 ARCH=ResNet18 BATCH_SIZE=64 sh ./scripts/sap_cifar_example.sh
+# DEVICE=0 DATASET=CIFAR100 EPOCH=350 ARCH=ResNet18 BATCH_SIZE=64 sh ./scripts/sap_cifar_example.sh
 data_path=./data/$DATASET
 val_index_path=./pretrained_models/$DATASET
 percentage_mislabeled=0.25

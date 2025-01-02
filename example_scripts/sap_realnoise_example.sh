@@ -1,7 +1,7 @@
 
-# DEVICE=0 DATASET=Mini-WebVision EPOCH=200 ARCH=InceptionResNetV2 BATCH_SIZE=128 sh ./scripts/verifix_realnoise_example.sh
-# DEVICE=0 DATASET=WebVision1.0 EPOCH=60 ARCH=InceptionResNetV2 BATCH_SIZE=128 sh ./scripts/verifix_realnoise_example.sh
-# DEVICE=0 DATASET=Clothing1M EPOCH=20 ARCH=ResNet50 BATCH_SIZE=128 sh ./scripts/verifix_realnoise_example.sh
+# DEVICE=0 DATASET=Mini-WebVision EPOCH=200 ARCH=InceptionResNetV2 BATCH_SIZE=128 sh ./scripts/sap_realnoise_example.sh
+# DEVICE=0 DATASET=WebVision1.0 EPOCH=60 ARCH=InceptionResNetV2 BATCH_SIZE=128 sh ./scripts/sap_realnoise_example.sh
+# DEVICE=0 DATASET=Clothing1M EPOCH=20 ARCH=ResNet50 BATCH_SIZE=128 sh ./scripts/sap_realnoise_example.sh
 data_path=./data/$DATASET
 val_index_path=./pretrained_models/$DATASET
 percentage_mislabeled=0.0
